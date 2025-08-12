@@ -1,8 +1,10 @@
 package com.sohair.journalApp.controller;
 
+import com.sohair.journalApp.api.response.WeatherResponse;
 import com.sohair.journalApp.model.Journal;
 import com.sohair.journalApp.model.User;
 import com.sohair.journalApp.service.UserService;
+import com.sohair.journalApp.service.WeatherService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    @Autowired
+    WeatherService weatherService;
 
     @Autowired
     private UserService userService;
@@ -51,6 +56,19 @@ public class UserController {
             return new ResponseEntity<>(userService.save(existingUser), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/greeting")
+    public ResponseEntity<?> greeting() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        WeatherResponse weatherResponse = weatherService.getWeather("Karachi");
+        String greeting = "";
+        if(weatherResponse != null){
+            return new ResponseEntity<>("Hello" + auth.getName() + "! The weather in Karachi is " + weatherResponse.getCurrent().getTemperature(), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>("Hello " + auth.getName() + "! Weather data is not available at the moment.", HttpStatus.OK);
         }
     }
 }

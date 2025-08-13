@@ -15,6 +15,10 @@ import java.util.Map;
 @Data
 public class AppCache {
 
+    public enum keys {
+        WEATHER_URL
+    }
+
     @Autowired
     private ConfigJournalAppRepository configJournalAppRepository;
 

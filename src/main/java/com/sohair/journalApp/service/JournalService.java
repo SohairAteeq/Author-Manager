@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,7 @@ public class JournalService {
     public ResponseEntity<Journal> save(Journal journal, String userName) {
         User user = userService.getUserByUserName(userName);
         if (user != null) {
+            journal.setDate(LocalDateTime.now());
             jrepo.save(journal); // save journal first
             user.getJournalEntries().add(journal);
             userService.updateWithoutPasswordHash(user); // new helper method

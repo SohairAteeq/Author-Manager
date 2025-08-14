@@ -23,6 +23,8 @@ public class User {
     private String userName;
     @NonNull
     private String password;
+    private String email;
+    private Boolean sentimentAnalysisEnabled = false;
     @DBRef
     private List<Journal> journalEntries = new ArrayList<>();
     private List<String> roles;

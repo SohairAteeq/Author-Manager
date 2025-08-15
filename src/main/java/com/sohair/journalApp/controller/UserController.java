@@ -59,13 +59,13 @@ public class UserController {
         }
     }
 
-    @GetMapping("/greeting")
-    public ResponseEntity<?> greeting() {
+    @GetMapping("/greeting/{city}")
+    public ResponseEntity<?> greeting(@PathVariable String city) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        WeatherResponse weatherResponse = weatherService.getWeather("Karachi");
+        WeatherResponse weatherResponse = weatherService.getWeather(city);
         String greeting = "";
         if(weatherResponse != null){
-            return new ResponseEntity<>("Hello" + auth.getName() + "! The weather in Karachi is " + weatherResponse.getCurrent().getTemperature(), HttpStatus.OK);
+            return new ResponseEntity<>("Hello " + auth.getName() + "! The weather in " + city + " is " + weatherResponse.getCurrent().getTemperature(), HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>("Hello " + auth.getName() + "! Weather data is not available at the moment.", HttpStatus.OK);

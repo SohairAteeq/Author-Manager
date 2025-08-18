@@ -26,6 +26,11 @@ public class AdminController {
         return adminService.getAllUsers();
     }
 
+    @DeleteMapping
+    public void delete(@RequestBody User user){
+        adminService.delete(user.getUserName());
+    }
+
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody  User user) {
         try{

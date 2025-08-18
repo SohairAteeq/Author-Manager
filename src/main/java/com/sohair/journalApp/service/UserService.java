@@ -4,11 +4,15 @@ import com.sohair.journalApp.model.Journal;
 import com.sohair.journalApp.model.User;
 import com.sohair.journalApp.repository.JournalRepository;
 import com.sohair.journalApp.repository.UserRepository;
+import com.sohair.journalApp.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,12 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class UserService {
+
+    @Autowired
+    JwtUtil jwtUtil;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     @Autowired
     BCryptPasswordEncoder encoder;
@@ -53,6 +63,9 @@ public class UserService {
         if (user == null) {
             throw new RuntimeException("User not found with username: " + userName);
         }
+        if(!user.getRoles().contains("ADMIN")){
+            throw new RuntimeException("User not permitted to do that");
+        }
         for (Journal journal : user.getJournalEntries()) {
             if (journal != null && journal.getId() != null) {
                 journalRepository.deleteById(journal.getId());
@@ -73,4 +86,25 @@ public class UserService {
     public User updateWithoutPasswordHash(User user) {
         return userRepository.save(user); // no password touch
     }
+
+    public String verify(User user) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        user.getUserName(), user.getPassword()
+                )
+        );
+
+        if (authentication.isAuthenticated()) {
+            // Extract role as String
+            String role = authentication.getAuthorities()
+                    .iterator()
+                    .next()
+                    .getAuthority(); // e.g., "ROLE_WORKER"
+
+            return jwtUtil.generateToken(user.getUserName(), role);
+        } else {
+            return "Login failed";
+        }
+    }
+
 }

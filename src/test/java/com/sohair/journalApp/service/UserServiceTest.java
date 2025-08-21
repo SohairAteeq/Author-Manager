@@ -18,12 +18,6 @@ public class UserServiceTest {
     UserService userService;
 
     @Disabled
-    @Test
-    public void getUserByUserName() {
-        assertNotNull(userService.getUserByUserName("sohair").getUserName());
-    }
-
-    @Disabled
     @ParameterizedTest
     @CsvSource({
             "1, 2, 3",

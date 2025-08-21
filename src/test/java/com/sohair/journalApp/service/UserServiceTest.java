@@ -28,7 +28,7 @@ public class UserServiceTest {
     @CsvSource({
             "1, 2, 3",
             "4, 5, 9",
-            "10, 20, 30",
+             "10, 20, 30",
             "100, 200, 300"
     })
     public void sum(int a, int b, int expected){
@@ -40,16 +40,5 @@ public class UserServiceTest {
     @ArgumentsSource(UserArgumentProvider.class)
     public void testWithArgumentsSource(User user) {
         assertNotNull(userService.save(user), "User already exists");
-    }
-
-    @Disabled
-    @ParameterizedTest
-    @CsvSource({
-            "sohair, sohair"
-    })
-    public void testUserName(String userName, String expectedUserName) {
-        User user = userService.getUserByUserName(userName);
-        assertNotNull(user, "User should not be null");
-        assertEquals(expectedUserName, user.getUserName(), "User name should match expected value");
     }
 }

@@ -1,0 +1,12 @@
+
+spring:
+  application:
+    name: Journal App
+  data:
+    mongodb:
+      uri: localdb1234
+      database: journal-app
+      index-creation:
+        enabled: true
+server:
+    port: 8081
